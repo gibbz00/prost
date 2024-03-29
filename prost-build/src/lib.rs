@@ -127,9 +127,7 @@
 //!
 //! [`protobuf-src`]: https://docs.rs/protobuf-src
 
-use std::fmt;
 use std::io::Result;
-use std::ops::RangeToInclusive;
 use std::path::Path;
 
 use prost_types::FileDescriptorSet;
@@ -139,10 +137,7 @@ pub use crate::ast::{Comments, Method, Service};
 
 mod code_generator;
 mod extern_paths;
-
 mod ident;
-use crate::ident::to_snake;
-
 mod message_graph;
 mod path;
 
@@ -154,6 +149,10 @@ mod config;
 pub use config::{
     error_message_protoc_not_found, protoc_from_env, protoc_include_from_env, Config,
 };
+
+mod module;
+// HELP(gibbz00): I think `Module` should be made pub(crate).
+pub use module::Module;
 
 /// A service generator takes a service descriptor and generates Rust code.
 ///
@@ -220,91 +219,6 @@ enum BytesType {
     Vec,
     /// The [`bytes::Bytes`] type.
     Bytes,
-}
-
-/// A Rust module path for a Protobuf package.
-#[derive(Clone, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
-pub struct Module {
-    components: Vec<String>,
-}
-
-impl Module {
-    /// Construct a module path from an iterator of parts.
-    pub fn from_parts<I>(parts: I) -> Self
-    where
-        I: IntoIterator,
-        I::Item: Into<String>,
-    {
-        Self {
-            components: parts.into_iter().map(|s| s.into()).collect(),
-        }
-    }
-
-    /// Construct a module path from a Protobuf package name.
-    ///
-    /// Constituent parts are automatically converted to snake case in order to follow
-    /// Rust module naming conventions.
-    pub fn from_protobuf_package_name(name: &str) -> Self {
-        Self {
-            components: name
-                .split('.')
-                .filter(|s| !s.is_empty())
-                .map(to_snake)
-                .collect(),
-        }
-    }
-
-    /// An iterator over the parts of the path.
-    pub fn parts(&self) -> impl Iterator<Item = &str> {
-        self.components.iter().map(|s| s.as_str())
-    }
-
-    /// Format the module path into a filename for generated Rust code.
-    ///
-    /// If the module path is empty, `default` is used to provide the root of the filename.
-    pub fn to_file_name_or(&self, default: &str) -> String {
-        let mut root = if self.components.is_empty() {
-            default.to_owned()
-        } else {
-            self.components.join(".")
-        };
-
-        root.push_str(".rs");
-
-        root
-    }
-
-    /// The number of parts in the module's path.
-    pub fn len(&self) -> usize {
-        self.components.len()
-    }
-
-    /// Whether the module's path contains any components.
-    pub fn is_empty(&self) -> bool {
-        self.components.is_empty()
-    }
-
-    fn to_partial_file_name(&self, range: RangeToInclusive<usize>) -> String {
-        self.components[range].join(".")
-    }
-
-    fn part(&self, idx: usize) -> &str {
-        self.components[idx].as_str()
-    }
-}
-
-impl fmt::Display for Module {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let mut parts = self.parts();
-        if let Some(first) = parts.next() {
-            f.write_str(first)?;
-        }
-        for part in parts {
-            f.write_str("::")?;
-            f.write_str(part)?;
-        }
-        Ok(())
-    }
 }
 
 /// Compile `.proto` files into Rust files during a Cargo build.

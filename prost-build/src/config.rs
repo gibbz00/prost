@@ -49,6 +49,7 @@ pub struct Config {
     pub(crate) skip_protoc_run: bool,
     pub(crate) include_file: Option<PathBuf>,
     pub(crate) prost_path: Option<String>,
+    #[cfg(feature = "format")]
     pub(crate) fmt: bool,
 }
 
@@ -736,9 +737,7 @@ impl Config {
     }
 
     /// Configures the code generator to format the output code via `prettyplease`.
-    ///
-    /// By default, this is enabled but if the `format` feature is not enabled this does
-    /// nothing.
+    #[cfg(feature = "format")]
     pub fn format(&mut self, enabled: bool) -> &mut Self {
         self.fmt = enabled;
         self
@@ -1056,6 +1055,7 @@ impl Config {
             }
         }
 
+        #[cfg(feature = "format")]
         if self.fmt {
             self.fmt_modules(&mut modules);
         }
@@ -1080,9 +1080,6 @@ impl Config {
             *buf = formatted;
         }
     }
-
-    #[cfg(not(feature = "format"))]
-    fn fmt_modules(&mut self, _: &mut HashMap<Module, String>) {}
 }
 
 impl default::Default for Config {
@@ -1110,6 +1107,7 @@ impl default::Default for Config {
             skip_protoc_run: false,
             include_file: None,
             prost_path: None,
+            #[cfg(feature = "format")]
             fmt: true,
         }
     }

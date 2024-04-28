@@ -1,4 +1,4 @@
-#[derive(PartialEq)]
+#[derive(Clone, Copy, PartialEq)]
 pub(super) enum Syntax {
     Proto2,
     Proto3,

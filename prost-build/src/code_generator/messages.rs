@@ -268,7 +268,7 @@ impl CodeGenerator<'_> {
     ) -> TokenStream {
         let type_ = field.r#type();
         let repeated = field.label == Some(Label::Repeated as i32);
-        let optional = self.optional(field);
+        let optional = field.optional(self.syntax);
         let ty = self.resolve_type(field, fq_message_name);
         let boxed = !repeated && self.should_box_field(field, fq_message_name, fq_message_name);
 
@@ -515,21 +515,6 @@ impl CodeGenerator<'_> {
                 "enumeration=\"{}\"",
                 self.resolve_ident(&FullyQualifiedName::from_type_name(field.type_name()))
             )),
-        }
-    }
-
-    fn optional(&self, field: &FieldDescriptorProto) -> bool {
-        if field.proto3_optional.unwrap_or(false) {
-            return true;
-        }
-
-        if field.label() != Label::Optional {
-            return false;
-        }
-
-        match field.r#type() {
-            Type::Message => true,
-            _ => self.syntax == Syntax::Proto2,
         }
     }
 }

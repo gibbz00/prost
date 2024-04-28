@@ -25,6 +25,9 @@ use crate::{Config, FullyQualifiedName};
 mod c_escaping;
 use c_escaping::unescape_c_escape_string;
 
+mod field_descriptor_ext;
+use field_descriptor_ext::FieldDescriptorExt;
+
 mod enums;
 mod messages;
 mod services;

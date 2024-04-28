@@ -3,7 +3,7 @@ use prost_types::{
     FieldDescriptorProto,
 };
 
-use super::syntax::Syntax;
+use crate::utils::*;
 
 pub trait FieldDescriptorExt {
     fn optional(&self, syntax: Syntax) -> bool;

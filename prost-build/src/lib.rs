@@ -153,6 +153,7 @@ mod extern_paths;
 mod ident;
 mod message_graph;
 mod path;
+mod utils;
 
 mod config;
 pub use config::Config;

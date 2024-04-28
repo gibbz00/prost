@@ -6,6 +6,8 @@ use petgraph::Graph;
 
 use prost_types::{field_descriptor_proto, DescriptorProto, FileDescriptorProto};
 
+use crate::utils::*;
+
 /// `MessageGraph` builds a graph of messages whose edges correspond to nesting.
 /// The goal is to recognize when message types are recursively nested, so
 /// that fields can be boxed when necessary.

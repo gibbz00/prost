@@ -1,5 +1,5 @@
 #[derive(Clone, Copy, PartialEq)]
-pub(super) enum Syntax {
+pub enum Syntax {
     Proto2,
     Proto3,
 }

@@ -19,21 +19,16 @@ use crate::ast::{Comments, Method, Service};
 use crate::extern_paths::ExternPaths;
 use crate::ident::{strip_enum_prefix, to_snake, to_upper_camel};
 use crate::message_graph::MessageGraph;
+use crate::utils::*;
 use crate::SynHelpers;
 use crate::{Config, FullyQualifiedName};
 
 mod c_escaping;
 use c_escaping::unescape_c_escape_string;
 
-mod field_descriptor_ext;
-use field_descriptor_ext::FieldDescriptorExt;
-
 mod enums;
 mod messages;
 mod services;
-
-mod syntax;
-use syntax::Syntax;
 
 // IMPROVEMENT: would be nice to have this auto-generated
 mod locations;

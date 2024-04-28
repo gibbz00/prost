@@ -6,10 +6,16 @@ use prost_types::{
 use crate::utils::*;
 
 pub trait FieldDescriptorExt {
+    fn repeated(&self) -> bool;
+
     fn optional(&self, syntax: Syntax) -> bool;
 }
 
 impl FieldDescriptorExt for FieldDescriptorProto {
+    fn repeated(&self) -> bool {
+        self.label == Some(Label::Repeated as i32)
+    }
+
     fn optional(&self, syntax: Syntax) -> bool {
         if self.proto3_optional.unwrap_or(false) {
             return true;

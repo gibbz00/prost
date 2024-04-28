@@ -267,7 +267,7 @@ impl CodeGenerator<'_> {
         field: &FieldDescriptorProto,
     ) -> TokenStream {
         let type_ = field.r#type();
-        let repeated = field.label == Some(Label::Repeated as i32);
+        let repeated = field.repeated();
         let optional = field.optional(self.syntax);
         let ty = self.resolve_type(field, fq_message_name);
         let boxed = !repeated && self.should_box_field(field, fq_message_name, fq_message_name);
